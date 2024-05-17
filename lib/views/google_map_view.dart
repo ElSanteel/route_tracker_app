@@ -26,3 +26,15 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     );
   }
 }
+
+// steps to get the user location
+// inquire about location service or check if location service is enabled or not ?  --> done
+// request permission --> done
+// get location
+// display
+
+// world view 0 -> 3
+// country view 4-> 6
+// city view 10 -> 12
+// street view 13 -> 17
+// building view 18 -> 20
