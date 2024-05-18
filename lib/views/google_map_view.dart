@@ -14,13 +14,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   // initialize the location service and make it late to initialize it later
   late LocationService locationService;
 
+  // initialize the google map controller and make it late to initialize it later
+  late GoogleMapController googleMapController;
+
   @override
   void initState() {
     initalCameraPosition = const CameraPosition(target: LatLng(0, 0));
     // initialize the location service
     locationService = LocationService();
-    // update the current location
-    updateCurrentLocation();
 
     super.initState();
   }
@@ -28,14 +29,28 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-      zoomControlsEnabled: false,
-      initialCameraPosition: initalCameraPosition,
-    );
+        zoomControlsEnabled: false,
+        initialCameraPosition: initalCameraPosition,
+        // onMapCreated callback to get the google map controller
+        onMapCreated: (controller) {
+          // assign the google map controller to the googleMapController
+          googleMapController = controller;
+          // we have put updateCurrentLocation here to make sure that the googleMapController is initialized
+          updateCurrentLocation();
+        });
   }
 
   void updateCurrentLocation() async {
     try {
+      // get the location data
       var locationData = await locationService.getLocation();
+      // update the camera position
+      CameraPosition myCameraPosition = CameraPosition(
+          target: LatLng(locationData.latitude!, locationData.longitude!),
+          zoom: 16);
+      // animate the camera to the new position
+      googleMapController
+          .animateCamera(CameraUpdate.newCameraPosition(myCameraPosition));
     } on LocationServiceException catch (e) {
       // TODO: handle the exception
     } on LocationPermissionException catch (e) {
