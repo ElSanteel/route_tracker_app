@@ -16,6 +16,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   // initialize the google map controller and make it late to initialize it later
   late GoogleMapController googleMapController;
+  Set<Marker> markers = {};
 
   @override
   void initState() {
@@ -29,28 +30,38 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-        zoomControlsEnabled: false,
-        initialCameraPosition: initalCameraPosition,
-        // onMapCreated callback to get the google map controller
-        onMapCreated: (controller) {
-          // assign the google map controller to the googleMapController
-          googleMapController = controller;
-          // we have put updateCurrentLocation here to make sure that the googleMapController is initialized
-          updateCurrentLocation();
-        });
+      zoomControlsEnabled: false,
+      initialCameraPosition: initalCameraPosition,
+      // onMapCreated callback to get the google map controller
+      onMapCreated: (controller) {
+        // assign the google map controller to the googleMapController
+        googleMapController = controller;
+        // we have put updateCurrentLocation here to make sure that the googleMapController is initialized
+        updateCurrentLocation();
+      },
+      markers: markers,
+    );
   }
 
   void updateCurrentLocation() async {
     try {
       // get the location data
       var locationData = await locationService.getLocation();
+      // create a new LatLng object with the location data
+      LatLng currentPosition =
+          LatLng(locationData.latitude!, locationData.longitude!);
+      Marker currentLocationMarker = Marker(
+          markerId: const MarkerId('my location'), position: currentPosition);
       // update the camera position
-      CameraPosition myCameraPosition = CameraPosition(
-          target: LatLng(locationData.latitude!, locationData.longitude!),
-          zoom: 16);
+      CameraPosition myCameraPosition =
+          CameraPosition(target: currentPosition, zoom: 16);
       // animate the camera to the new position
       googleMapController
           .animateCamera(CameraUpdate.newCameraPosition(myCameraPosition));
+      // add the marker to the markers set
+      markers.add(currentLocationMarker);
+      // update the state
+      setState(() {});
     } on LocationServiceException catch (e) {
       // TODO: handle the exception
     } on LocationPermissionException catch (e) {
