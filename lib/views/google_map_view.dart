@@ -72,6 +72,10 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   }
 }
 
+// steps to build the route tracker app
+// text field => search place
+// create route
+
 // steps to get the user location
 // inquire about location service or check if location service is enabled or not ?  --> done
 // request permission --> done
