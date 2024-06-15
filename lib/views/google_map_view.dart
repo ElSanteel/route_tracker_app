@@ -14,6 +14,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   late CameraPosition initalCameraPosition;
   // initialize the location service and make it late to initialize it later
   late LocationService locationService;
+  late TextEditingController textEditingController;
 
   // initialize the google map controller and make it late to initialize it later
   late GoogleMapController googleMapController;
@@ -21,11 +22,21 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   @override
   void initState() {
+    textEditingController = TextEditingController();
     initalCameraPosition = const CameraPosition(target: LatLng(0, 0));
     // initialize the location service
     locationService = LocationService();
+    textEditingController.addListener(() {
+      print(textEditingController.text);
+    });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,7 +55,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
           },
           markers: markers,
         ),
-        const Positioned(top: 20, left: 25, right: 25, child: CustomTextField())
+        Positioned(
+          top: 20,
+          left: 25,
+          right: 25,
+          child: CustomTextField(
+            textEditingController: textEditingController,
+          ),
+        )
       ],
     );
   }
