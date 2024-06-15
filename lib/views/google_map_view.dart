@@ -72,6 +72,12 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   }
 }
 
+// steps to display places on the map
+// create text field and takes input from it
+// listen to the text field
+// search place
+// display results
+
 // steps to build the route tracker app
 // text field => search place
 // create route
