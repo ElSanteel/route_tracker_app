@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
 import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 import 'package:route_tracker_app/utils/location_service.dart';
+import 'package:route_tracker_app/widgets/custom_list_view.dart';
 import 'package:route_tracker_app/widgets/custom_text_field.dart';
 
 class GoogleMapView extends StatefulWidget {
@@ -44,6 +45,9 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         places.clear();
         places.addAll(result);
         setState(() {});
+      } else {
+        places.clear();
+        setState(() {});
       }
     });
   }
@@ -78,6 +82,9 @@ class _GoogleMapViewState extends State<GoogleMapView> {
             children: [
               CustomTextField(
                 textEditingController: textEditingController,
+              ),
+              const SizedBox(
+                height: 16,
               ),
               CustomListView(places: places)
             ],
@@ -116,28 +123,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   }
 }
 
-class CustomListView extends StatelessWidget {
-  const CustomListView({
-    super.key,
-    required this.places,
-  });
 
-  final List<PlaceAutocompleteModel> places;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Text(places[index].description!);
-      },
-      separatorBuilder: (context, index) {
-        return const Divider();
-      },
-      itemCount: places.length,
-    );
-  }
-}
 // steps to display places on the map
 
 // create text field and takes input from it
