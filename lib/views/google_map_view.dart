@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
-import 'package:route_tracker_app/models/place_details_model/place_details_model.dart';
 import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 import 'package:route_tracker_app/utils/location_service.dart';
 import 'package:route_tracker_app/widgets/custom_list_view.dart';
 import 'package:route_tracker_app/widgets/custom_text_field.dart';
+import 'package:uuid/uuid.dart';
 
 class GoogleMapView extends StatefulWidget {
   const GoogleMapView({super.key});
@@ -26,8 +26,16 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   Set<Marker> markers = {};
   List<PlaceAutocompleteModel> places = [];
 
+  // initialize the uuid
+  late Uuid uuid;
+  // initialize the session token
+  String? sessionToken;
+
   @override
   void initState() {
+    // initialize the uuid
+    uuid = const Uuid();
+
     googleMapsPlacesService = GoogleMapsPlacesService();
     textEditingController = TextEditingController();
     initalCameraPosition = const CameraPosition(target: LatLng(0, 0));
@@ -40,9 +48,13 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   void fetchPredictions() {
     textEditingController.addListener(() async {
+      // if the session token is null then assign a new session token
+      sessionToken ??= uuid.v4();
+
+      // if the text field is not empty then make a request to the google maps places service
       if (textEditingController.text.isNotEmpty) {
         var result = await googleMapsPlacesService.getPredictions(
-            input: textEditingController.text);
+            sessionToken: sessionToken!, input: textEditingController.text);
         places.clear();
         places.addAll(result);
         setState(() {});
@@ -93,8 +105,8 @@ class _GoogleMapViewState extends State<GoogleMapView> {
                 onPlaceSelect: (PlaceDetailsModel) {
                   textEditingController.clear();
                   places.clear();
+                  sessionToken = null;
                   setState(() {});
-                  print(PlaceDetailsModel.geometry!.location!.lat);
                 },
               )
             ],
