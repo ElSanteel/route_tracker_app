@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
+import 'package:route_tracker_app/models/place_details_model/place_details_model.dart';
 import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 import 'package:route_tracker_app/utils/location_service.dart';
 import 'package:route_tracker_app/widgets/custom_list_view.dart';
@@ -86,7 +87,16 @@ class _GoogleMapViewState extends State<GoogleMapView> {
               const SizedBox(
                 height: 16,
               ),
-              CustomListView(places: places, googleMapsPlacesService: googleMapsPlacesService)
+              CustomListView(
+                places: places,
+                googleMapsPlacesService: googleMapsPlacesService,
+                onPlaceSelect: (PlaceDetailsModel) {
+                  textEditingController.clear();
+                  places.clear();
+                  setState(() {});
+                  print(PlaceDetailsModel.geometry!.location!.lat);
+                },
+              )
             ],
           ),
         ),
