@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
+import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 
 class CustomListView extends StatelessWidget {
   const CustomListView({
     super.key,
-    required this.places,
+    required this.places, required this.googleMapsPlacesService,
   });
 
   final List<PlaceAutocompleteModel> places;
+  final GoogleMapsPlacesService googleMapsPlacesService;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class CustomListView extends StatelessWidget {
               title: Text(places[index].description!),
               trailing: IconButton(
                 icon: const Icon(Icons.arrow_forward),
-                onPressed: () {},
+                onPressed: () async{
+                var placeDetails= await googleMapsPlacesService.getPlaceDetails(placeId: places[index].placeId.toString());
+                },
               ));
         },
         separatorBuilder: (context, index) {
