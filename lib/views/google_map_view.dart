@@ -123,7 +123,6 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   }
 }
 
-
 // steps to display places on the map
 
 // create text field and takes input from it

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController textEditingController;
   const CustomTextField({
-    super.key, required this.textEditingController,
+    super.key,
+    required this.textEditingController,
   });
 
   @override
