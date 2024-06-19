@@ -3,7 +3,10 @@ class RoutesModifier {
   bool? avoidHighways;
   bool? avoidFerries;
 
-  RoutesModifier({this.avoidTolls=false, this.avoidHighways=false, this.avoidFerries=false});
+  RoutesModifier(
+      {this.avoidTolls = false,
+      this.avoidHighways = false,
+      this.avoidFerries = false});
 
   factory RoutesModifier.fromJson(Map<String, dynamic> json) {
     return RoutesModifier(

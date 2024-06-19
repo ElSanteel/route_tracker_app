@@ -24,17 +24,17 @@ class CustomListView extends StatelessWidget {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return ListTile(
-              leading: const Icon(FontAwesomeIcons.mapMarkerAlt),
-              title: Text(places[index].description!),
-              trailing: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () async {
-                  var placeDetails =
-                      await googleMapsPlacesService.getPlaceDetails(
-                          placeId: places[index].placeId.toString());
-                  onPlaceSelect(placeDetails);
-                },
-              ));
+            leading: const Icon(FontAwesomeIcons.mapMarkerAlt),
+            title: Text(places[index].description!),
+            trailing: IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: () async {
+                var placeDetails = await googleMapsPlacesService
+                    .getPlaceDetails(placeId: places[index].placeId.toString());
+                onPlaceSelect(placeDetails);
+              },
+            ),
+          );
         },
         separatorBuilder: (context, index) {
           return const Divider(

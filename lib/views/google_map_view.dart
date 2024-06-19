@@ -31,6 +31,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
   List<PlaceAutocompleteModel> places = [];
+  Set<Polyline> polylines = {};
 
   // initialize the uuid
   late Uuid uuid;
@@ -39,7 +40,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   late RoutesService routesService;
   late LatLng currentLocation;
-  late LatLng destination;
+  late LatLng desination;
 
   @override
   void initState() {
@@ -87,6 +88,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     return Stack(
       children: [
         GoogleMap(
+          polylines: polylines,
           zoomControlsEnabled: false,
           initialCameraPosition: initalCameraPosition,
           // onMapCreated callback to get the google map controller
@@ -113,16 +115,17 @@ class _GoogleMapViewState extends State<GoogleMapView> {
               CustomListView(
                 places: places,
                 googleMapsPlacesService: googleMapsPlacesService,
-                onPlaceSelect: (placeDetailsModel) {
+                onPlaceSelect: (placeDetailsModel) async {
                   textEditingController.clear();
                   places.clear();
                   sessionToken = null;
                   setState(() {});
-                  destination = LatLng(
+                  desination = LatLng(
                       placeDetailsModel.geometry!.location!.lat!,
                       placeDetailsModel.geometry!.location!.lng!);
 
-                  getRouteData();
+                  var points = await getRouteData();
+                  displayRoute(points);
                 },
               )
             ],
@@ -174,11 +177,10 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     // create a new LocationInfoModel object with the destination location
     LocationInfoModel destination = LocationInfoModel(
       location: LocationModel(
-        latLng: LatLngModel(
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-        ),
-      ),
+          latLng: LatLngModel(
+        latitude: desination.latitude,
+        longitude: desination.longitude,
+      )),
     );
 
     RoutesModel routes = await routesService.fetchRoutes(
@@ -192,13 +194,25 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
   List<LatLng> getDecodedRoute(
       PolylinePoints polylinePoints, RoutesModel routes) {
-    List<PointLatLng> result = polylinePoints
-        .decodePolyline(routes.routes!.first.polyline!.encodedPolyline!);
+    List<PointLatLng> result = polylinePoints.decodePolyline(
+      routes.routes!.first.polyline!.encodedPolyline!,
+    );
 
     List<LatLng> points =
         result.map((e) => LatLng(e.latitude, e.longitude)).toList();
 
     return points;
+  }
+
+  void displayRoute(List<LatLng> points) {
+    Polyline route = Polyline(
+      color: Colors.blue,
+      width: 5,
+      polylineId: const PolylineId('route'),
+      points: points,
+    );
+    polylines.add(route);
+    setState(() {});
   }
 }
 
