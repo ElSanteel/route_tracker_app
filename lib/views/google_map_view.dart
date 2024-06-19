@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
 import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 import 'package:route_tracker_app/utils/location_service.dart';
+import 'package:route_tracker_app/utils/routes_service.dart';
 import 'package:route_tracker_app/widgets/custom_list_view.dart';
 import 'package:route_tracker_app/widgets/custom_text_field.dart';
 import 'package:uuid/uuid.dart';
@@ -31,6 +32,10 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   // initialize the session token
   String? sessionToken;
 
+  late RoutesService routesService;
+  late LatLng currentLocation;
+  late LatLng destination;
+
   @override
   void initState() {
     // initialize the uuid
@@ -41,8 +46,9 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     initalCameraPosition = const CameraPosition(target: LatLng(0, 0));
     // initialize the location service
     locationService = LocationService();
-    fetchPredictions();
+    routesService = RoutesService();
 
+    fetchPredictions();
     super.initState();
   }
 
@@ -102,11 +108,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
               CustomListView(
                 places: places,
                 googleMapsPlacesService: googleMapsPlacesService,
-                onPlaceSelect: (PlaceDetailsModel) {
+                onPlaceSelect: (placeDetailsModel) {
                   textEditingController.clear();
                   places.clear();
                   sessionToken = null;
                   setState(() {});
+                  destination = LatLng(
+                      placeDetailsModel.geometry!.location!.lat!,
+                      placeDetailsModel.geometry!.location!.lng!);
                 },
               )
             ],
@@ -120,14 +129,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     try {
       // get the location data
       var locationData = await locationService.getLocation();
+
       // create a new LatLng object with the location data
-      LatLng currentPosition =
-          LatLng(locationData.latitude!, locationData.longitude!);
+      currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
       Marker currentLocationMarker = Marker(
-          markerId: const MarkerId('my location'), position: currentPosition);
+          markerId: const MarkerId('my location'), position: currentLocation);
       // update the camera position
       CameraPosition myCameraPosition =
-          CameraPosition(target: currentPosition, zoom: 16);
+          CameraPosition(target: currentLocation, zoom: 16);
       // animate the camera to the new position
       googleMapController
           .animateCamera(CameraUpdate.newCameraPosition(myCameraPosition));
