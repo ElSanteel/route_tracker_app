@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:route_tracker_app/models/location_info/lat_lng.dart';
+import 'package:route_tracker_app/models/location_info/location.dart';
+import 'package:route_tracker_app/models/location_info/location_info.dart';
 import 'package:route_tracker_app/models/place_autocomplete_model/place_autocomplete_model.dart';
+import 'package:route_tracker_app/models/routes_model/route.dart';
+import 'package:route_tracker_app/models/routes_model/routes_model.dart';
 import 'package:route_tracker_app/utils/google_maps_place_service.dart';
 import 'package:route_tracker_app/utils/location_service.dart';
 import 'package:route_tracker_app/utils/routes_service.dart';
@@ -116,6 +121,8 @@ class _GoogleMapViewState extends State<GoogleMapView> {
                   destination = LatLng(
                       placeDetailsModel.geometry!.location!.lat!,
                       placeDetailsModel.geometry!.location!.lng!);
+
+                  getRouteData();
                 },
               )
             ],
@@ -151,6 +158,32 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     } catch (e) {
       // TODO: handle the exception
     }
+  }
+
+  Future<RouteModel> getRouteData() async{
+    // create a new LocationInfoModel object with the current location
+    LocationInfoModel origin = LocationInfoModel(
+      location: LocationModel(
+        latLng: LatLngModel(
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        ),
+      ),
+    );
+
+    // create a new LocationInfoModel object with the destination location
+    LocationInfoModel destination = LocationInfoModel(
+      location: LocationModel(
+        latLng: LatLngModel(
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        ),
+      ),
+    );
+
+    RoutesModel routes= await routesService.fetchRoutes(origin: origin, destination: destination);
+
+    return routes.routes!.first;
   }
 }
 
