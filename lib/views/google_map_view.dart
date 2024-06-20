@@ -175,3 +175,10 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 // city view 10 -> 12
 // street view 13 -> 17
 // building view 18 -> 20
+
+// Google Map Task
+
+// button => get directions
+// marker origin
+// marker destination
+// marker customized

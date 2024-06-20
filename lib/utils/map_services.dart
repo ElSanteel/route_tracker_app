@@ -134,8 +134,3 @@ class MapServices {
     return await placesService.getPlaceDetails(placeId: placeId);
   }
 }
-
-// button => get directions
-// marker origin
-// marker destination
-// marker customized
