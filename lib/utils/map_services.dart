@@ -17,6 +17,7 @@ class MapServices {
   PlacesService placesService = PlacesService();
   LocationService locationService = LocationService();
   RoutesService routesService = RoutesService();
+  LatLng? currentLocation;
 
   Future<void> getPredictions(
       {required String input,
@@ -34,13 +35,13 @@ class MapServices {
   }
 
   Future<List<LatLng>> getRouteData(
-      {required LatLng currentLocation, required LatLng desination}) async {
+      { required LatLng desination}) async {
     // create a new LocationInfoModel object with the current location
     LocationInfoModel origin = LocationInfoModel(
       location: LocationModel(
         latLng: LatLngModel(
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
+          latitude: currentLocation!.latitude,
+          longitude: currentLocation!.longitude,
         ),
       ),
     );
@@ -107,30 +108,34 @@ class MapServices {
         northeast: LatLng(northEastLatitude, northEastLongitude));
   }
 
-  Future<LatLng> updateCurrentLocation(
+  void updateCurrentLocation(
       {required GoogleMapController googleMapController,
-      required Set<Marker> markers}) async {
+      required Set<Marker> markers,required Function onUpdateCurrentLocation}) {
     // get the location data
-    var locationData = await locationService.getLocation();
-
-    // create a new LatLng object with the location data
-    var currentLocation =
-        LatLng(locationData.latitude!, locationData.longitude!);
-    Marker currentLocationMarker = Marker(
-        markerId: const MarkerId('my location'), position: currentLocation);
-    // update the camera position
-    CameraPosition myCameraPosition =
-        CameraPosition(target: currentLocation, zoom: 16);
-    // animate the camera to the new position
-    googleMapController
-        .animateCamera(CameraUpdate.newCameraPosition(myCameraPosition));
-    // add the marker to the markers set
-    markers.add(currentLocationMarker);
-    return currentLocation;
+    locationService.getRealTimeLocationData((locationData) {
+      // create a new LatLng object with the location data
+       currentLocation =
+          LatLng(locationData.latitude!, locationData.longitude!);
+      Marker currentLocationMarker = Marker(
+          markerId: const MarkerId('my location'), position: currentLocation!);
+      // update the camera position
+      CameraPosition myCameraPosition =
+          CameraPosition(target: currentLocation!, zoom: 16);
+      // animate the camera to the new position
+      googleMapController
+          .animateCamera(CameraUpdate.newCameraPosition(myCameraPosition));
+      // add the marker to the markers set
+      markers.add(currentLocationMarker);
+      onUpdateCurrentLocation();
+    });
   }
 
   Future<PlaceDetailsModel> getPlaceDetails({required String placeId}) async {
-   return await placesService.getPlaceDetails(placeId: placeId);
+    return await placesService.getPlaceDetails(placeId: placeId);
   }
-
 }
+
+// button => get directions
+// marker origin
+// marker destination
+// marker customized

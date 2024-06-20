@@ -32,7 +32,6 @@ class _GoogleMapViewState extends State<GoogleMapView> {
   // initialize the session token
   String? sessionToken;
 
-  late LatLng currentLocation;
   late LatLng desination;
 
   Timer? debounce;
@@ -119,8 +118,8 @@ class _GoogleMapViewState extends State<GoogleMapView> {
                       placeDetailsModel.geometry!.location!.lat!,
                       placeDetailsModel.geometry!.location!.lng!);
 
-                  var points = await mapServices.getRouteData(
-                      currentLocation: currentLocation, desination: desination);
+                  var points =
+                      await mapServices.getRouteData(desination: desination);
                   mapServices.displayRoute(points,
                       polylines: polylines,
                       googleMapController: googleMapController);
@@ -134,10 +133,14 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     );
   }
 
-  void updateCurrentLocation() async {
+  void updateCurrentLocation() {
     try {
-      currentLocation = await mapServices.updateCurrentLocation(
-          googleMapController: googleMapController, markers: markers);
+      mapServices.updateCurrentLocation(
+          googleMapController: googleMapController,
+          markers: markers,
+          onUpdateCurrentLocation: () {
+            setState(() {});
+          });
       setState(() {});
     } on LocationServiceException catch (e) {
       // TODO: handle the exception
