@@ -13,7 +13,7 @@ class CustomListView extends StatelessWidget {
   });
 
   final List<PlaceAutocompleteModel> places;
-  final GoogleMapsPlacesService googleMapsPlacesService;
+  final PlacesService googleMapsPlacesService;
   final void Function(PlaceDetailsModel) onPlaceSelect;
 
   @override

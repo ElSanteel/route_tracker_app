@@ -23,7 +23,7 @@ class GoogleMapView extends StatefulWidget {
 }
 
 class _GoogleMapViewState extends State<GoogleMapView> {
-  late GoogleMapsPlacesService googleMapsPlacesService;
+  late PlacesService placesService;
   late CameraPosition initalCameraPosition;
   // initialize the location service and make it late to initialize it later
   late LocationService locationService;
@@ -49,7 +49,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
     // initialize the uuid
     uuid = const Uuid();
 
-    googleMapsPlacesService = GoogleMapsPlacesService();
+    placesService = PlacesService();
     textEditingController = TextEditingController();
     initalCameraPosition = const CameraPosition(target: LatLng(0, 0));
     // initialize the location service
@@ -67,7 +67,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
 
       // if the text field is not empty then make a request to the google maps places service
       if (textEditingController.text.isNotEmpty) {
-        var result = await googleMapsPlacesService.getPredictions(
+        var result = await placesService.getPredictions(
             sessionToken: sessionToken!, input: textEditingController.text);
         places.clear();
         places.addAll(result);
@@ -116,7 +116,7 @@ class _GoogleMapViewState extends State<GoogleMapView> {
               ),
               CustomListView(
                 places: places,
-                googleMapsPlacesService: googleMapsPlacesService,
+                googleMapsPlacesService: placesService,
                 onPlaceSelect: (placeDetailsModel) async {
                   textEditingController.clear();
                   places.clear();
