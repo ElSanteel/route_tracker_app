@@ -76,6 +76,9 @@ class _GoogleMapViewState extends State<GoogleMapView> {
         places.clear();
         setState(() {});
       }
+      setState(() {
+        
+      });
     });
   }
 
